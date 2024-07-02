@@ -33,3 +33,5 @@ plt.legend()
 plt.title('Función de Autocorrelación de la Velocidad')
 plt.savefig("Corr.png")
 
+#prueba
+
