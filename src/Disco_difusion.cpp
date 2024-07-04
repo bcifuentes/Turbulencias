@@ -65,8 +65,8 @@ int main(int argc, char *argv[])
     double m0 = 1.0;
     double R0 = 1.0;
 
-    double Ncuadros = 1000;
-    double dt = 1e-3, T = 100, tcuadro = T / Ncuadros;
+    double Ncuadros = 5000; //TODO: Revisar impresion, a 5000 se etsan generadndo menos datos (4167 en realidad)
+    double dt = 1e-3, T = 25, tcuadro = T / Ncuadros;
 
     random_device rd;
     mt19937 rng(rd()); // Generador con semilla aleatoria
