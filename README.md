@@ -2,7 +2,7 @@
 
 Proyecto Metodos de Simulación
 
-### Por favor interntar comentar lo maximo posible el codigo que siban
+### Por favor interntar comentar lo maximo posible el codigo que suban
 
 ## Carpetas
 
