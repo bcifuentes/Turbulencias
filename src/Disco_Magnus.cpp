@@ -11,9 +11,8 @@ const double T = 25;
 
 // Constantes Globales
 const double Gamma = 16.0;
-const double dt = 1e-3;
 const double alpha = 1 - exp(-Gamma * dt);
-const int N = 1;
+const int N = 10;
 
 // Constantes para fuerzas
 const double Cd = 0.47; // Coeficiente de arrastre (esfera)
