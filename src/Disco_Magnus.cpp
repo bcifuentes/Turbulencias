@@ -1,10 +1,14 @@
 #include <iostream>
 #include <cmath>
 #include "vector.h"
-#include <random>
+#include <random> //considero que random es mas robusta y estable que random 64 de JD
 using namespace std;
 
 //* ------------------------------ Constantes globales ------------------------------
+// Constantes Temporales
+const double dt = 1e-3;
+const double T = 25;
+
 // Constantes Globales
 const double Gamma = 16.0;
 const double dt = 1e-3;
@@ -30,11 +34,11 @@ private:
     double m, R, omega;
 
 public:
-    void Inicie(double x0, double y0, double vx0, double vy0, double omega0, double m0, double R0);
-    void CalculateFuerzas(void);
-    void Muevase(double dt, double KT, mt19937 &gen, normal_distribution<> &dis);
-    void Arranque(double dt);
-    void Dibujese(void);
+    void Inicie(double x0, double y0, double vx0, double vy0, double omega0, double m0, double R0); // Inicializa las variables de una particula
+    void CalculateFuerzas(void); // Calcula las fuerzas que actuan sobre solo una particula (no calcula las fuerzas entre particulas)
+    void Muevase(double dt, double KT, mt19937 &gen, normal_distribution<> &dis); // Mueve una particula en un intervalo de tiempo dt
+    void Arranque(double dt); // funcion para arrancar el algoritmo de leapfrog
+    void Dibujese(void); // Dibuja la particula para gnuplot
     double get_x() { return r.x(); }
     double get_y() { return r.y(); }
     double get_z() { return r.z(); }
@@ -46,11 +50,11 @@ public:
 
 // Declaracion de funciones globales
 
-void InicieAnimacion(const std::string& str);
-void InicieCuadro(void);
-void TermineCuadro(void);
-bool stringToBool(const std::string& str);
-void Imprimase(double t, Cuerpo *Polen, bool gnuplot);
+void InicieAnimacion(const std::string& str); // Inicia la animacion en gnuplot
+void InicieCuadro(void); // Inicia un cuadro en gnuplot
+void TermineCuadro(void); // Termina un cuadro en gnuplot
+bool stringToBool(const std::string& str); // Convierte un string a un booleano
+void Imprimase(double t, Cuerpo *Polen, bool gnuplot); // Imprime los datos de las particulas en un tiempo t tanto para gnuplot como datos crudos
 
 //* ------------------------------ main ------------------------------
 
@@ -67,20 +71,24 @@ int main(int argc, char *argv[])
     double omega0 = 100.0;
 
     double Ncuadros = 5000; //TODO: Revisar impresion, a 5000 se etsan generadndo menos datos (4167 en realidad)
-    double dt = 1e-3, T = 25, tcuadro = T / Ncuadros;
+    double tcuadro = T / Ncuadros;
 
     random_device rd;
     mt19937 rng(rd()); // Generador con semilla aleatoria
     // mt19937 rng(1); // Generador con semilla fija
-    normal_distribution<> dis(0.0, 1.0);
+    normal_distribution<> dis(0.0, 1.0); // Distribucion normal con media 0 y desviacion estandar 1
 
-    Cuerpo Polen[N];
+    Cuerpo Polen[N]; // Inicializa un arreglo de particulas
+
+    //Arranque del sistema
 
     for (int i = 0; i < N; i++) Polen[i].Inicie(r0, 0.0, v0, 0.0, 0.0, m0, R0);
 
     for (int i = 0; i < N; i++) Polen[i].CalculateFuerzas();
 
     for (int i = 0; i < N; i++) Polen[i].Arranque(dt);
+
+    // Simulacion
 
     for (double t = 0.0, tdibujo = 0.0; t < T + dt; t += dt, tdibujo += dt)
     {
@@ -103,8 +111,10 @@ int main(int argc, char *argv[])
 
 void Cuerpo::Inicie(double x0, double y0, double vx0, double vy0, double omega0, double m0, double R0)
 {
+    // inicializa vectores
     r.load(x0, y0, 0.0);
     v.load(vx0, vy0, 0.0);
+    // inicializa variables
     omega = omega0;
     m = m0;
     R = R0;
@@ -134,7 +144,7 @@ void Cuerpo::CalculateFuerzas(void)
 
 void Cuerpo::Muevase(double dt, double KT, mt19937 &gen, normal_distribution<> &dis)
 {
-    // algoritmo de leapfrog
+    // algoritmo de leapfrog estocastico
     vector3D vp = v + F * dt;
     vector3D epsilon;
     epsilon.load(dis(gen), dis(gen), 0);
